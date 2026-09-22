@@ -316,18 +316,11 @@ const pricePanel = (d) => {
   const list = d.priceList;
   const addOns = d.addOnPrices || [];
   const main = list ? priceCard('Price (RM)', list) : `
-    <div class="flex flex-col items-center gap-4 rounded-2xl bg-white px-6 py-10 text-center ring-1 ring-[#126CAD]/15">
-      <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-[#126CAD] text-white">${icon('IconTag', 20)}</div>
+    <div class="flex items-center gap-4 rounded-2xl bg-white px-5 py-5 ring-1 ring-[#126CAD]/15">
+      <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-[#126CAD]/10 text-[#126CAD]">${icon('IconTag', 20)}</div>
       <div>
-        <div class="text-sm font-bold text-[#28292A]">Pricing on request</div>
-        <p class="mx-auto mt-1 max-w-sm text-xs leading-relaxed text-[#28292A]/65">Price depends on your vehicle and plan. WhatsApp our team for a quote.</p>
-      </div>
-      <div class="grid w-full max-w-md gap-2 sm:grid-cols-2">
-        ${contactNumbers.map((n) => `
-          <a href="${waChatLink(n.wa)}" target="_blank" rel="noopener noreferrer"
-             class="inline-flex items-center justify-center gap-2 rounded-xl bg-[#FF8335] px-4 py-2.5 text-sm font-bold text-[#28292A] transition hover:bg-[#FF8335]/90">
-            ${icon('IconBrandWhatsapp', 18)}${esc(n.label)}
-          </a>`).join('')}
+        <div class="text-sm font-bold text-[#28292A]">Price list not available yet</div>
+        <p class="mt-0.5 text-xs leading-relaxed text-[#28292A]/65">Prices for this plan will be shown here once they are published.</p>
       </div>
     </div>`;
   const addOnCard = addOns.length
