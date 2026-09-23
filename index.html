@@ -292,50 +292,42 @@ const coveredCard = (group, addOn) => `
     </ul>
   </div>`;
 
+const priceCard = (label, list, addOn = false) => {
+  const cols = list.columns ? 'grid-cols-[1fr_5.5rem_5.5rem] sm:grid-cols-[1fr_8rem_8rem]' : 'grid-cols-[1fr_auto]';
+  return `
+    <section class="relative rounded-2xl border border-[#28292A]/20 bg-white px-5 pb-2 pt-7">
+      <span class="absolute -top-3.5 right-5 whitespace-nowrap rounded-lg px-3.5 py-1.5 text-xs font-bold uppercase tracking-wide ${addOn ? 'bg-[#FF8335] text-[#28292A]' : 'bg-[#126CAD] text-white'}">${esc(label)}</span>
+      ${list.columns ? `
+        <div class="grid gap-3 border-b border-[#80888f]/25 pb-2 ${cols}">
+          <span></span>
+          ${list.columns.map((c) => `<span class="text-center text-[11px] font-bold uppercase tracking-wide text-[#126CAD]">${esc(c)}</span>`).join('')}
+        </div>` : ''}
+      <div class="divide-y divide-[#80888f]/20">
+        ${list.rows.map((r) => `
+          <div class="grid items-center gap-3 py-3 ${cols}">
+            <div class="space-y-0.5 text-sm font-bold text-[#28292A]">${r.labels.map((l) => `<div>${esc(l)}</div>`).join('')}</div>
+            ${r.prices.map((x) => `<div class="font-bold tabular-nums text-[#28292A] ${list.columns ? 'text-center text-sm sm:text-base' : 'text-right text-lg'}">${esc(x)}</div>`).join('')}
+          </div>`).join('')}
+      </div>
+    </section>`;
+};
+
 const pricePanel = (d) => {
   const list = d.priceList;
   const addOns = d.addOnPrices || [];
-  const columns = (list && list.columns) || ['Price'];
-  const head = `
-    <div class="mb-3 flex flex-wrap items-end justify-between gap-2">
-      <div class="text-xs font-bold uppercase tracking-wide text-[#126CAD]">${esc(d.planName)}</div>
-      ${list || addOns.length ? '<div class="text-[11px] italic text-[#28292A]/60">*Prices exclude 8% SST</div>' : ''}
-    </div>`;
-  const notice = !list ? `
-    <div class="mb-4 flex items-center gap-4 rounded-2xl bg-white px-5 py-5 ring-1 ring-[#126CAD]/15">
+  const main = list ? priceCard('Price (RM)', list) : `
+    <div class="flex items-center gap-4 rounded-2xl bg-white px-5 py-5 ring-1 ring-[#126CAD]/15">
       <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-[#126CAD]/10 text-[#126CAD]">${icon('IconTag', 20)}</div>
       <div>
         <div class="text-sm font-bold text-[#28292A]">Price list not available yet</div>
         <p class="mt-0.5 text-xs leading-relaxed text-[#28292A]/65">Prices for this plan will be shown here once they are published.</p>
       </div>
-    </div>` : '';
-  const table = (list || addOns.length) ? `
-    <div class="overflow-x-auto rounded-2xl ring-1 ring-[#80888f]/20">
-      <table class="w-full text-sm">
-        <thead>
-          <tr class="bg-[#126CAD] text-white">
-            <th class="px-5 py-2.5 text-left text-[11px] font-bold uppercase tracking-wide">${list ? 'Vehicle' : 'Add-on'}</th>
-            ${(list ? columns : ['Price']).map((c) => `<th class="whitespace-nowrap px-5 py-2.5 text-right text-[11px] font-bold uppercase tracking-wide">${esc(c)} (RM)</th>`).join('')}
-          </tr>
-        </thead>
-        <tbody>
-          ${list ? list.rows.map((r, i) => `
-            <tr class="${i % 2 ? 'bg-[#F0FAFF]/60' : 'bg-white'}">
-              <td class="px-5 py-3.5">${r.labels.map((l) => `<div class="font-semibold text-[#28292A]">${esc(l)}</div>`).join('')}</td>
-              ${r.prices.map((x) => `<td class="whitespace-nowrap px-5 py-3.5 text-right font-bold tabular-nums text-[#28292A]">${esc(x)}</td>`).join('')}
-            </tr>`).join('') : ''}
-          ${addOns.map((a) => `
-            <tr class="border-t-2 border-[#FF8335]/40 bg-[#FF8335]/5">
-              <td class="px-5 py-3.5">
-                <span class="mr-2 whitespace-nowrap rounded bg-[#FF8335] px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-[#28292A]">Add-on</span>
-                <span class="font-semibold text-[#28292A]">${esc(a.title)}</span>
-              </td>
-              <td colspan="${list ? columns.length : 1}" class="whitespace-nowrap px-5 py-3.5 text-right font-bold tabular-nums text-[#28292A]">${esc(a.price)}</td>
-            </tr>`).join('')}
-        </tbody>
-      </table>
-    </div>` : '';
-  return `<div class="mx-auto max-w-3xl">${head}${notice}${table}</div>`;
+    </div>`;
+  const addOnCard = addOns.length
+    ? priceCard('Add-On Coverage (RM)', { rows: addOns.map((a) => ({ labels: [a.title], prices: [a.price] })) }, true)
+    : '';
+  const sst = (list || addOns.length) ? '<p class="-mt-5 text-right text-[11px] font-bold italic text-[#28292A]">*Prices exclude 8% SST</p>' : '';
+  return `<div class="space-y-8 rounded-2xl bg-[#F0FAFF] px-4 pb-5 pt-9 sm:px-6">${main}${addOnCard}${sst}</div>`;
 };
 
 const coveragePanel = (d) => `
